@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 
 function Cita({cita,index, eliminarCita}){
 
@@ -100,13 +100,21 @@ function Formulario({crearCita}){
 
 function App() {
 
+  //cargar las citas del localStorage como state inciial
+  let citasIniciales = JSON.parse(localStorage.getItem('citas'));
+
+    if(!citasIniciales){
+      citasIniciales =[];
+    }
+  
+
   /** 
    * UseState retorna dos funciones
    * El dato cita es el state actual = this.state
    * El guardarCita (actualizaState) es una funcion que actualiza al state = this.setState()
    * lo que esta dentro de useState(---Aqui---) es el valor inicial que tiene cita
    */
-  const [citas, guardarCita] = useState([]);
+  const [citas, guardarCita] = useState(citasIniciales);
 
   //Agregar las nuevas citas al state
   const crearCita = cita=> {
@@ -128,6 +136,17 @@ function App() {
   //Cargar condicionalmente un titulo
   const titulo = Object.keys(citas).length === 0 ? 'No hay citas!': 'Administrar las citas';
 
+//Almacena en local Storage
+  useEffect(()=>{
+    let citasIniciales = JSON.parse(localStorage.getItem('citas'));
+
+    if(citasIniciales){
+      localStorage.setItem('citas', JSON.stringify(citas));
+    }else{
+      //La primera vez que pase y no haya nada creara un arreglo con citas vacio
+      localStorage.setItem('citas', JSON.stringify([]));
+    }
+  },[citas]);
   return (
     <Fragment>
       <h1>Administrador de Pacientes</h1>
